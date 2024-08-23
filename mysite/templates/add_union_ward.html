@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Union/Ward</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f7f7;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-weight: bold;
+            color: #333;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 5px;
+        }
+        .btn-secondary {
+            border-radius: 5px;
+            color: #ffffff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        #add-union-btn {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Add Union/Ward Information</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="districtSelect" class="form-label">District</label>
+                <select class="form-control" id="districtSelect" name="district_id" required>
+                    <option value="">Select a District</option>
+                    {% for district in districts %}
+                        <option value="{{ district.id }}">{{ district.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="upozillaSelect" class="form-label">Upozilla</label>
+                <select class="form-control" id="upozillaSelect" name="upozilla_id" required>
+                    <option value="">Select a Upozilla</option>
+                    <!-- Upozillas will be populated dynamically -->
+                </select>
+            </div>
+
+            <div id="union-container">
+                <div class="form-group union-group">
+                    <label for="unionName1" class="form-label">Union/Ward Name</label>
+                    <input type="text" class="form-control" id="unionName1" name="union_names[]" placeholder="Enter union/ward name" required>
+                </div>
+            </div>
+
+            <button type="button" id="add-union-btn" class="btn btn-outline-secondary">Add Union/Ward</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let unionCount = 1;
+
+            document.getElementById('districtSelect').addEventListener('change', function() {
+                const districtId = this.value;
+                const upozillaSelect = document.getElementById('upozillaSelect');
+
+                // Clear previous Upozilla options
+                upozillaSelect.innerHTML = '<option value="">Select a Upozilla</option>';
+
+                if (districtId) {
+                    fetch(`/get_upozillas/${districtId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.upozillas.forEach(upozilla => {
+                                const option = document.createElement('option');
+                                option.value = upozilla.id;
+                                option.textContent = upozilla.name;
+                                upozillaSelect.appendChild(option);
+                            });
+                        });
+                }
+            });
+
+            document.getElementById('add-union-btn').addEventListener('click', function() {
+                unionCount++;
+                const unionField = `
+                    <div class="form-group union-group">
+                        <label for="unionName${unionCount}" class="form-label">Union/Ward Name</label>
+                        <input type="text" class="form-control" id="unionName${unionCount}" name="union_names[]" placeholder="Enter union/ward name" required>
+                    </div>
+                `;
+                document.getElementById('union-container').insertAdjacentHTML('beforeend', unionField);
+            });
+        });
+    </script>
+</body>
+</html>

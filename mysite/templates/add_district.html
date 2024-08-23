@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add District</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f7f7;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-weight: bold;
+            color: #333;
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 5px;
+        }
+        .btn-secondary {
+            border-radius: 5px;
+            color: #ffffff;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        #add-upozilla-btn {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Add District Information</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="districtName" class="form-label">District Name</label>
+                <input type="text" class="form-control" id="districtName" name="district_name" placeholder="Enter district name" required>
+            </div>
+
+            <div id="upozilla-container">
+                <div class="form-group upozilla-group">
+                    <label for="upozillaName1" class="form-label">Upozilla Name</label>
+                    <input type="text" class="form-control" id="upozillaName1" name="upozilla_names[]" placeholder="Enter upozilla name" required>
+                </div>
+            </div>
+
+            <button type="button" id="add-upozilla-btn" class="btn btn-outline-secondary">Add Upozilla</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let upozillaCount = 1;
+
+            document.getElementById('add-upozilla-btn').addEventListener('click', function() {
+                upozillaCount++;
+                const upozillaField = `
+                    <div class="form-group upozilla-group">
+                        <label for="upozillaName${upozillaCount}" class="form-label">Upozilla Name</label>
+                        <input type="text" class="form-control" id="upozillaName${upozillaCount}" name="upozilla_names[]" placeholder="Enter upozilla name" required>
+                    </div>
+                `;
+                document.getElementById('upozilla-container').insertAdjacentHTML('beforeend', upozillaField);
+            });
+        });
+    </script>
+</body>
+</html>
