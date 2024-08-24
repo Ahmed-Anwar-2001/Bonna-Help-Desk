@@ -18,7 +18,7 @@ def add_district(request):
         # Check if the district name already exists
         if District.objects.filter(name=district_name).exists():
             print("District with this name already exists")
-            return render(request, 'add_district.html')  # Redisplay the form with an error message
+            return render(request, 'add_district.html')  
 
         if district_name:
             district = District.objects.create(name=district_name)
